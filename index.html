@@ -1,0 +1,100 @@
+<html>
+<head>
+    <title></title>
+    <meta name="referrer" content="no-referrer">
+    <meta name="wechat-enable-text-zoom-em" content="true">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="color-scheme" content="light dark">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=0,viewport-fit=cover">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="format-detection" content="telephone=no">
+    <meta name="referrer" content="origin-when-cross-origin">
+    <meta name="referrer" content="strict-origin-when-cross-origin">
+    <script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <style>
+        *{
+            padding: 0;
+            margin: 0;
+        }
+        .bg{
+            width: 100%;
+        }
+        .bg img{
+            width: 100%;
+        }
+    </style>
+</head>  
+<body>
+    <!--app根节点-->
+    <div id="app"></div>
+    <script>
+        // 获取当前页面的完整URL
+        var currentURL = window.location.href;
+        
+        // 使用URL对象解析URL
+        var url = new URL(currentURL);
+        
+        // 获取jwid参数的值
+        var i = url.searchParams.get("i");
+
+        var landUrl = ""
+        // 检查是否成功获取jwid参数的值
+        function jump(){
+            $(document).ready(function(){  
+                $('iframe').attr('src', landUrl);  
+            });
+        }
+        if (i) {
+            // 通过jwid获取到详情
+            $.ajax({
+                url: "http://inquiry.cc/public/enter/" + i,
+                dataType: "jsonp",
+                jsonpCallback: "handleJSONPResponse",
+                success: function(res) {
+                    if (!res.land_index) {
+                        $('#app').html('<p style="text-align:center;margin-top:50px;">找不到页面</p>');
+                    }else{
+                        const title = res.title || "请点击进入";
+
+                        const bgImg = res.bg_img || "https://mmbiz.qpic.cn/mmbiz_png/QN6eRib8S1zicC0pcjFPaW1ssp04tA857fG3I3U6RPEibDjoMJV3a84YItoEuibialS5Yg11rXmy9YqicNc7pLh6sqTw/640?wx_fmt=png&amp";
+                        
+                        const icon = res.icon || "https://mmbiz.qpic.cn/mmbiz_png/QN6eRib8S1zicC0pcjFPaW1ssp04tA857fsD95VRgnZlqzXBucDwPbBu2TfsG61A0F22fHWCnMMaYGKvjLWy9icvQ/640?wx_fmt=png&amp";
+                        
+                        landUrl = "http://inquiry.cc/public/land/"+res.land_index+".html"
+                        // 渲染
+                        $('#app').html(
+                            '<a href="javascript:void(0);" onclick="jump()">' +
+                            '   <img src="'+bgImg+'" class="bg" />' +
+                            '</a>' +
+                            '<iframe src="'+landUrl+'"></iframe>'
+                        );
+                        
+                        // 添加图标
+                        var shortcutIconLink = $("<link>");
+                        shortcutIconLink.attr("rel", "shortcut icon");
+                        shortcutIconLink.attr("href", icon);
+                        $("head").append(shortcutIconLink);
+
+                        // 设置标题
+                        $("title").text(title);
+                    }
+                    
+                },
+                error: function() {
+                    
+                    // 网络请求失败
+                    $('#app').html('<p style="text-align:center;margin-top:50px;">找不到页面</p>');
+                }
+            });
+            
+        }else {
+            
+            // 页面加载失败
+            $('#app').html('<p style="text-align:center;margin-top:50px;">页面加载失败</p>');
+        }
+        
+    </script>
+</body>
+</html>
