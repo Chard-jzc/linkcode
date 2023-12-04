@@ -49,7 +49,7 @@
         if (i) {
             // 通过jwid获取到详情
             $.ajax({
-                url: "http://inquiry.cc/public/enter/" + i,
+                url: "https://inquiry.cc/public/enter/" + i,
                 dataType: "jsonp",
                 jsonpCallback: "handleJSONPResponse",
                 success: function(res) {
@@ -62,7 +62,7 @@
                         
                         const icon = res.icon || "https://mmbiz.qpic.cn/mmbiz_png/QN6eRib8S1zicC0pcjFPaW1ssp04tA857fsD95VRgnZlqzXBucDwPbBu2TfsG61A0F22fHWCnMMaYGKvjLWy9icvQ/640?wx_fmt=png&amp";
                         
-                        landUrl = "http://inquiry.cc/public/land/"+res.land_index+".html"
+                        landUrl = "https://inquiry.cc/public/land/"+res.land_index+".html"
                         // 渲染
                         $('#app').html(
                             '<a href="javascript:void(0);" onclick="jump()">' +
