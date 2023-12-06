@@ -3,6 +3,7 @@
     <title></title>
     <meta name="referrer" content="no-referrer">
     <meta name="wechat-enable-text-zoom-em" content="true">
+    <meta http-equiv="Cache-control" content="max-age=86400">
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="color-scheme" content="light dark">
@@ -10,6 +11,7 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black">
     <meta name="format-detection" content="telephone=no">
+    <link rel="shortcut icon" href="">
     <script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
     <style>
         *{
@@ -28,6 +30,7 @@
     <!--app根节点-->
     <div id="app"></div>
     <script>
+        const domain = "https://inquiry.chard.site"
         // 获取当前页面的完整URL
         var currentURL = window.location.href;
         
@@ -39,41 +42,39 @@
 
         var landUrl = ""
         // 检查是否成功获取jwid参数的值
+
         function jump(){
-            $(document).ready(function(){  
-                $('iframe').attr('src', landUrl);  
-            });
+            load()
         }
-        if (i) {
-            // 通过jwid获取到详情
+        function load(){
             $.ajax({
-                url: "https://inquiry.cc/public/enter/" + i,
+                url: domain + "/public/enter/" + i,
                 dataType: "jsonp",
                 jsonpCallback: "handleJSONPResponse",
                 success: function(res) {
-                    if (!res.land_index) {
+                    if (!res.land_index || !res.token) {
                         $('#app').html('<p style="text-align:center;margin-top:50px;">找不到页面</p>');
                     }else{
+
                         const title = res.title || "请点击进入";
 
                         const bgImg = res.bg_img || "https://mmbiz.qpic.cn/mmbiz_png/QN6eRib8S1zicC0pcjFPaW1ssp04tA857fG3I3U6RPEibDjoMJV3a84YItoEuibialS5Yg11rXmy9YqicNc7pLh6sqTw/640?wx_fmt=png&amp";
                         
                         const icon = res.icon || "https://mmbiz.qpic.cn/mmbiz_png/QN6eRib8S1zicC0pcjFPaW1ssp04tA857fsD95VRgnZlqzXBucDwPbBu2TfsG61A0F22fHWCnMMaYGKvjLWy9icvQ/640?wx_fmt=png&amp";
                         
-                        landUrl = "https://inquiry.cc/public/land/"+res.land_index+".html"
+                        landUrl = domain + "/public/land/" + res.land_index + "?token=" + res.token
+                        $('#app').empty()
                         // 渲染
                         $('#app').html(
                             '<a href="javascript:void(0);" onclick="jump()">' +
                             '   <img src="'+bgImg+'" class="bg" />' +
                             '</a>' +
-                            '<iframe src="'+landUrl+'" style="height: 0;width: 0;"></iframe>'
+                            '<iframe src="'+landUrl+'" style="width:0;height:0"></iframe>'
                         );
                         
                         // 添加图标
-                        var shortcutIconLink = $("<link>");
-                        shortcutIconLink.attr("rel", "shortcut icon");
-                        shortcutIconLink.attr("href", icon);
-                        $("head").append(shortcutIconLink);
+                        $("link").attr("rel", "shortcut icon");
+                        $("link").attr("href", icon);
 
                         // 设置标题
                         $("title").text(title);
@@ -86,12 +87,19 @@
                     $('#app').html('<p style="text-align:center;margin-top:50px;">找不到页面</p>');
                 }
             });
+        }
+        
+        if (i) {
+            // 通过jwid获取到详情
+            load()
             
         }else {
             
             // 页面加载失败
             $('#app').html('<p style="text-align:center;margin-top:50px;">页面加载失败</p>');
         }
+
+        
         
     </script>
 </body>
